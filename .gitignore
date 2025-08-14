@@ -1,6 +1,9 @@
 # Test report
 artworks_report.pdf
 
+# Out files
+out/report.html
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]

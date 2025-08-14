@@ -1,7 +1,12 @@
 import requests
 import fpdf # pyright: ignore[reportMissingModuleSource]
 import yaml 
+from jinja2 import Environment, FileSystemLoader
 from argparse import ArgumentParser
+
+# Jinja setup
+env = Environment(loader = FileSystemLoader('templates'))
+template = env.get_template('report.html')
 
 '''
 -> https://api.artic.edu/api/v1/artworks/search?q=war&fields=id,title,artist_title,date_display&size=25
@@ -55,7 +60,7 @@ pdf.set_font("Arial", size=12)
 pdf.cell(200, 10, txt="Artworks Report", ln=True, align='C')
 pdf.ln(10)
 
-def search_artworks(search, fields, artworks, email):
+def searchArtworks(search, fields, artworks, email):
     base_search = 'https://api.artic.edu/api/v1/artworks/search'
     params = {
         'q': search,
@@ -77,9 +82,14 @@ def reportFilling(data):
         pdf.cell(15, 15, txt=str(element), ln=True, align='L')
     pdf.output('artworks_report.pdf')
 
-search_artworks(
+search_data = searchArtworks(
     search=search,
     fields=fields,
     artworks=max_items,
     email=recipients[0]
 )
+
+# HTML report creation
+output = template.render(data=search_data, name=name)
+with open('out/report.html', 'w', encoding='utf-8') as f:
+    f.write(output)
