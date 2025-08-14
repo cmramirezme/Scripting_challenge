@@ -17,9 +17,18 @@ args = parser.parse_args()
 # Load the yaml query info to feed the script
 with open(args.config, 'r') as file:
     config = yaml.safe_load(file)
-    
-print("~~~~~ config (yaml.safe_load(file)): ", config)
-    
+config = config.get('reports')
+config = config[0]
+
+print("INFO ~~~~~ config (yaml.safe_load(file)): ", config)
+
+# Extract variables from config dictionary to use them in the script
+name = config.get('name')
+search = config.get('search')
+fields = config.get('fields')
+max_items = config.get('max_items')
+recipients = config.get('recipients')
+
 pdf = fpdf.FPDF()
 pdf.add_page()
 pdf.set_font("Arial", size=12)
@@ -51,7 +60,7 @@ def search_artworks(search, fields, artworks, email):
     data = json_data["data"][:artworks]
 
     #reportFilling(filtered_data)
-    print('The API\'s data is: \n',data)
+    print('INFO ~~~~~ The API\'s data is: \n',data)
 
     return data
 
