@@ -1,6 +1,8 @@
 import requests
 import fpdf # pyright: ignore[reportMissingModuleSource]
 import yaml 
+import smtplib
+from datetime import datetime
 from jinja2 import Environment, FileSystemLoader
 from argparse import ArgumentParser
 
@@ -72,9 +74,6 @@ def searchArtworks(search, fields, artworks, email):
     json_data = response.json()
     data = json_data["data"][:artworks]
 
-    #reportFilling(filtered_data)
-    print('INFO ~~~~~ The API\'s data is: \n',data)
-
     return data
 
 def reportFilling(data):
@@ -89,7 +88,10 @@ search_data = searchArtworks(
     email=recipients[0]
 )
 
+# Timestamp of the report
+timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
 # HTML report creation
-output = template.render(data=search_data, name=name)
+output = template.render(data=search_data, name=name, created_at=timestamp)
 with open('out/report.html', 'w', encoding='utf-8') as f:
     f.write(output)
