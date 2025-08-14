@@ -2,11 +2,12 @@ import requests
 import fpdf # pyright: ignore[reportMissingModuleSource]
 import yaml 
 import smtplib
+import pdfkit
 from datetime import datetime
 from jinja2 import Environment, FileSystemLoader
 from argparse import ArgumentParser
 
-# Jinja setup
+# Jinja setup for using templates
 env = Environment(loader = FileSystemLoader('templates'))
 template = env.get_template('report.html')
 
@@ -95,3 +96,14 @@ timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 output = template.render(data=search_data, name=name, created_at=timestamp)
 with open('out/report.html', 'w', encoding='utf-8') as f:
     f.write(output)
+    
+# Convert HTML to PDF
+def pdfCreation(file):
+    try:
+        pdfkit.from_file(file, 'out/report.pdf', verbose=True, options={'enable-local-file-access': ''})
+    except Exception as e:
+        print(f"Error creating PDF: {e}")
+    return
+pdfCreation('out/report.html')
+
+# Mailing system

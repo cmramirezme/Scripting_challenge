@@ -2,7 +2,7 @@
 artworks_report.pdf
 
 # Out files
-out/report.html
+out/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
