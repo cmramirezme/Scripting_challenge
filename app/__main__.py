@@ -4,14 +4,20 @@ import fpdf # pyright: ignore[reportMissingModuleSource]
 import yaml 
 from argparse import ArgumentParser
 
+# Script CLI options for receiving arguments in command line
 parser = ArgumentParser(
     prog = 'Artworks Report Script',
     description='Generate a report of artworks from the Art Institute of Chicago API.'
     )
 
-parser.add_argument('--config', 
-                    type=str, 
-                    help='Input parameters path for the input information of the report: report name, search term, fields, max items, recipients for email.')
+subparsers = parser.add_subparsers(dest = 'command', required = True)
+
+run_parser = subparsers.add_parser('run', help='Run the report generation')
+run_parser.add_argument('--config', 
+                        type = str, 
+                        help = 'Input parameters path for the input information of the report: report name, search term, fields, max items, recipients for email.',
+                        required = True)
+
 args = parser.parse_args()
 
 # Load the yaml query info to feed the script
@@ -19,8 +25,6 @@ with open(args.config, 'r') as file:
     config = yaml.safe_load(file)
 config = config.get('reports')
 config = config[0]
-
-print("INFO ~~~~~ config (yaml.safe_load(file)): ", config)
 
 # Extract variables from config dictionary to use them in the script
 name = config.get('name')
