@@ -38,12 +38,13 @@ jobs:
           retention-days: 14
       - name: Summarize output
         run: |
+          cd Scripting_challenge/
           echo "## 📄 Reports Summary" >> $GITHUB_STEP_SUMMARY
           echo "- Generated reports:" >> $GITHUB_STEP_SUMMARY
-          for f in Scripting_challenge/out/*.pdf Scripting_challenge/out/*.json; do
+          for f in out/*.pdf out/*.json; do
             echo "  - $(basename "$f")" >> $GITHUB_STEP_SUMMARY
           done
-          for f in Scripting_challenge/out/*.json; do
+          for f in out/*.json; do
             count=$(jq length "$f")
             name=$(basename "$f" .json)
             echo "- Items: $count items" >> $GITHUB_STEP_SUMMARY
