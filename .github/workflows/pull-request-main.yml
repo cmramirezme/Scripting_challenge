@@ -15,6 +15,7 @@ jobs:
       - name: Show current directory and list contents
         run: |
           pwd
+          git clone https://github.com/cmramirezme/Scripting_challenge.git
           ls ../ -R 
       - name: Upload PDF report
         uses: actions/upload-artifact@v4
