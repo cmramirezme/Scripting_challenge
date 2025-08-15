@@ -20,5 +20,5 @@ jobs:
         uses: actions/upload-artifact@v4
         continue-on-error: true
         with:
-          name: pdf-report.pdf
-          path: out/
+          name: pdf-report
+          path: out/pdf-report.pdf
