@@ -175,12 +175,9 @@ def sendEmail(receivers, name, search, fields, max_items, out_dir, smtp_host, sm
         )
 
     # Send email using environment secrets and SMTP
-    with smtplib.SMTP(smtp_host, smtp_port, timeout) as server:
-        server.ehlo()
-        server.starttls()
-        server.ehlo()
-        server.login(smtp_user, smtp_pass)
-        server.send_message(msg)
+    server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
+    server.login(smtp_user, smtp_pass)
+    server.send_message(msg)
     print("SCRIPT INFO: Email sent successfully.")
     return
 
