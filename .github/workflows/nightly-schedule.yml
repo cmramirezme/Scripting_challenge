@@ -5,7 +5,7 @@ on:
     - cron: "0 6 * * *"
 
 jobs:
-  pull-request-on-main:
+  nightly-schedule:
     runs-on: ubuntu-latest
     steps:
       - name: Clone repository
@@ -24,7 +24,7 @@ jobs:
         run: |
           pwd
           cd Scripting_challenge
-          mkdir -p out && python3 -m app run --config config/queries.yml --out out > out/log.log 2>&1
+          python3 -m app run --config config/queries.yml --out out 
       - name: Upload report
         uses: actions/upload-artifact@v4
         continue-on-error: true
