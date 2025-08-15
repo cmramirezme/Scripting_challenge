@@ -1,0 +1,14 @@
+name: Pull-Request-main
+on:
+  push:
+    branches:
+      - test-actions   # <-- tu rama actual
+    paths:
+      - "config\queries.yml"
+
+jobs:
+  pull-request-on-main:
+    runs-on: ubuntu-latest
+    steps:
+      - name: execute in --dry-run mode
+        run: echo "Running app"
