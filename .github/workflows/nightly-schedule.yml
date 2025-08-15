@@ -24,6 +24,8 @@ jobs:
           git checkout test-actions
           pwd
           ls 
+          sudo apt install telnet-ssl
+          telnet smtp.gmail.com 587
       - name: Installing dependencies
         run: |
           cd Scripting_challenge
