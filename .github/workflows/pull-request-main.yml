@@ -19,12 +19,14 @@ jobs:
           ls 
       - name: Installing dependencies
         run: |
-          pip install -r Scripting_challenge/app/requirements.txt
+          cd Scripting_challenge
+          pip install -r app/requirements.txt
           sudo apt-get install wkhtmltopdf
       - name: dry-run mode
         run: |
           pwd
-          python3 -m /home/runner/work/Scripting_challenge/Scripting_challenge/Scripting_challenge/app run --config Scripting_challenge/config/queries.yml --out out --dry-run
+          cd Scripting_challenge
+          python3 -m app run --config config/queries.yml --out out --dry-run
       - name: Upload PDF report
         uses: actions/upload-artifact@v4
         continue-on-error: true
