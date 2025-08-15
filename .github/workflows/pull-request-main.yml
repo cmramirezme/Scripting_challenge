@@ -32,7 +32,7 @@ jobs:
         run: |
           echo "## 📄 Reports Summary" >> $GITHUB_STEP_SUMMARY
           echo "- Generated reports:" >> $GITHUB_STEP_SUMMARY
-          for f in Scripting_challenge/out/*.pdf *.json; do
+          for f in Scripting_challenge/out/*.pdf Scripting_challenge/out/*.json; do
             echo "  - $(basename "$f")" >> $GITHUB_STEP_SUMMARY
           done
           for f in Scripting_challenge/out/*.json; do
