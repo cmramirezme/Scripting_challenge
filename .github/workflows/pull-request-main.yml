@@ -24,7 +24,7 @@ jobs:
       - name: dry-run mode
         run: |
           pwd
-          python3 -m Scripting_challenge/app run --config Scripting_challenge/config/queries.yml --out out --dry-run
+          python3 -m /home/runner/work/Scripting_challenge/Scripting_challenge/Scripting_challenge/app run --config Scripting_challenge/config/queries.yml --out out --dry-run
       - name: Upload PDF report
         uses: actions/upload-artifact@v4
         continue-on-error: true
