@@ -24,7 +24,9 @@ jobs:
         continue-on-error: true
         with:
           name: pdf-report
-          path: Scripting_challenge/out/*.{pdf,json}
+          path: | 
+            Scripting_challenge/out/*.pdf
+            Scripting_challenge/out/*.json
           retention-days: 14
       - name: Summarize output
         run: |
