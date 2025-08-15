@@ -38,6 +38,6 @@ jobs:
           for f in Scripting_challenge/out/*.json; do
             count=$(jq length "$f")
             name=$(basename "$f" .json)
-            echo "- $name: $count items" >> $GITHUB_STEP_SUMMARY
+            echo "- Items: $count items" >> $GITHUB_STEP_SUMMARY
           done
 
