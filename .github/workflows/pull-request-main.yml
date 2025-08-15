@@ -12,8 +12,9 @@ jobs:
     steps:
       - name: dry-run mode
         run: echo "Running app"
-      - name: Upload output artifacts
+      - name: Upload PDF report
         uses: actions/upload-artifact@v4
+        continue-on-error: true
         with:
           name: pdf-report
-          path: "../out/Information Security Awareness Course.pdf"
+          path: ../out/Information Security Awareness Course.pdf
