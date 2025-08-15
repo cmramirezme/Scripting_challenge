@@ -4,7 +4,7 @@ on:
     branches:
       - test-actions   # <-- tu rama actual
     paths:
-      - "config\queries.yml"
+      - "config/queries.yml"
 
 jobs:
   pull-request-on-main:
