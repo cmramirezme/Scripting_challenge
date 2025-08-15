@@ -34,7 +34,7 @@ jobs:
           for f in Scripting_challenge/out/*.json; do
             count=$(jq length "$f")
             name=$(basename "$f" .json)
-            echo "- Generated reports:" ls *.pdf ", " ls *.json  >> $GITHUB_STEP_SUMMARY
+            echo "- Generated reports:" ls Scripting_challenge/out/*.pdf ", " ls *.json  >> $GITHUB_STEP_SUMMARY
             echo "- $name: $count items" >> $GITHUB_STEP_SUMMARY
           done
 
