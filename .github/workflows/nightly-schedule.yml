@@ -8,7 +8,7 @@ on:
       - test-actions 
 
 jobs:
-  nightly-schedule:
+  nightly-schedule-task:
     runs-on: ubuntu-latest
     steps:
       - name: Clone repository
