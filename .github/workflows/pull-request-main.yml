@@ -16,6 +16,8 @@ jobs:
         run: |
           pwd
           git clone https://github.com/cmramirezme/Scripting_challenge.git
+          cd Scripting_challenge
+          git checkout test-actions
           ls ../ -R 
       - name: Upload PDF report
         uses: actions/upload-artifact@v4
