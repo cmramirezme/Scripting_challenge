@@ -19,7 +19,6 @@ jobs:
           ls 
       - name: Installing dependencies
         run: |
-          sudo apt install python
           pip install Scripting_challenge/app/requirement.txt
           sudo apt-get install wkhtmltopdf
       - name: dry-run mode
