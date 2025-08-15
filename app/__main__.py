@@ -22,11 +22,37 @@ from pathlib import Path
     max items: 25
     recipients: ["tean@example.com" ]
 '''
-# Jinja setup for using templates SETUP
-env = Environment(loader = FileSystemLoader('templates'))
-template = env.get_template('report.html')
+def scriptBanner():
+    banner =r'''
+  ______   _______  ________  __       __   ______   _______   __    __   ______          ______    ______   _______   ______  _______  ________ 
+ /      \ |       \ |        \| \  _  |  \ /      \ |       \ |  \  /  \ /      \        /      \  /      \ |       \ |      \|       \ |       \ 
+|  $$$$$$\| $$$$$$$\ \$$$$$$$$| $ / \ | $$|  $$$$$$\| $$$$$$$\| $$ /  $$|  $$$$$$\      |  $$$$$$\|  $$$$$$\| $$$$$$$\ \$$$$$$| $$$$$$$\ \$$$$$$$
+| $$__| $$| $$__| $$  | $$   | $$/  $\| $$| $$  | $$| $$__| $$| $$/  $$ | $$___\$$      | $$___\$$| $$   \$$| $$__| $$  | $$  | $$__/ $$  | $$   
+| $$    $$| $$    $$  | $$   | $$  $$$\ $$| $$  | $$| $$    $$| $$  $$   \$$    \        \$$    \ | $$      | $$    $$  | $$  | $$    $$  | $$   
+| $$$$$$$$| $$$$$$$\  | $$   | $$ $$\$$\$$| $$  | $$| $$$$$$$\| $$$$$\   _\$$$$$$\       _\$$$$$$\| $$   __ | $$$$$$$\  | $$  | $$$$$$$   | $$   
+| $$  | $$| $$  | $$  | $$   | $$$$  \$$$$| $$__/ $$| $$  | $$| $$ \$$\ |  \__| $$      |  \__| $$| $$__/  \| $$  | $$ _| $$_ | $$        | $$   
+| $$  | $$| $$  | $$  | $$   | $$$    \$$$ \$$    $$| $$  | $$| $$  \$$\ \$$    $$       \$$    $$ \$$    $$| $$  | $$|   $$ \| $$        | $$   
+ \$$   \$$ \$$   \$$   \$$    \$$      \$$  \$$$$$$  \$$   \$$ \$$   \$$  \$$$$$$         \$$$$$$   \$$$$$$  \$$   \$$ \$$$$$$ \$$         \$$   
+                                                                                                                                                 '''                                                                             
+    print(banner)
+    print("SCRIPT INFO: Starting report generation...")
+    return
 
-def parserSetup():
+def jinjaSetup():
+    # Jinja setup for using templates
+    env = Environment(loader = FileSystemLoader('templates'))
+    template = env.get_template('report.html')
+    return template
+
+def setConfig(parser):
+    # Load the yaml query info to feed the script SETUP
+    with open(parser.config, 'r') as file:
+        config = yaml.safe_load(file)
+    config = config.get('reports')
+    config = config[0]
+    return config
+
+def parserSetup(): #SETUP
     # Script CLI options for receiving arguments in command line
     parser = ArgumentParser(
         prog = 'Artworks Report Script',
@@ -43,25 +69,12 @@ def parserSetup():
     run_parser.add_argument('--out',
                             type = str,
                             help = 'Output directory for the generated report files.',
-                            required = False) #THIS MUST BE REQUIRED WHEN FINISHED
+                            required = True)
 
     args = parser.parse_args()
     return args
 
-# Load the yaml query info to feed the script SETUP
-with open(parserSetup().config, 'r') as file:
-    config = yaml.safe_load(file)
-config = config.get('reports')
-config = config[0]
-
-# Extract variables from config dictionary to use them in the script SETUP
-name = config.get('name')
-search = config.get('search')
-fields = config.get('fields'); fields = ", ".join(fields)
-max_items = config.get('max_items')
-recipients = config.get('recipients')
-
-def searchArtworks(search, fields, artworks): #FUNCTION
+def searchArtworks(search, fields, artworks, parser): #FUNCTION
     # Define the search URL and parameters
     base_search = 'https://api.artic.edu/api/v1/artworks/search'
     params = {
@@ -72,21 +85,34 @@ def searchArtworks(search, fields, artworks): #FUNCTION
 
     # Make the search request
     response = requests.get(base_search, params=params)
-    json_data = response.json()
+    if isinstance(response, requests.Response) and response.status_code == 200:
+        json_data = response.json()
+    else:
+        print(f"SCRIPT ERROR: fetching artworks: {response.status_code}")
+        return []
 
-    # Output the json query file with the search results
-    with open('out/query.json', 'w', encoding='utf-8') as f:
-        f.write(json.dumps(json_data))
+    if isinstance(json_data, dict) and 'data' in json_data:
+        if not os.path.exists(parser.out):
+            os.makedirs(parser.out)
+        # Output the json query file with the search results
+        with open(os.path.join(parser.out, 'query.json'), 'w', encoding='utf-8') as f:
+            f.write(json.dumps(json_data))
+        print(f"SCRIPT INFO: Query JSON file created successfully.")
+    else:
+        print(f"SCRIPT INFO: Unexpected response format: {json_data}")
 
     data = json_data["data"][:artworks]
     return data
 
-# Make the API fetch query call MAIN
-search_data = searchArtworks( 
-    search=search,
-    fields=fields,
-    artworks=max_items,
-)
+def makeSearch(search_input,fields_input,max_items_input, parser):
+    # Make the API fetch query call
+    search_data = searchArtworks( 
+        search=search_input,
+        fields=fields_input,
+        artworks=max_items_input,
+        parser = parser
+    )
+    return search_data
 
 # Timestamp of the report FUNCTION
 def getTimestamp():
@@ -94,20 +120,26 @@ def getTimestamp():
     return timestamp
 
 # HTML report creation MAIN
-def htmlReportCreation():
-    output = template.render(data=search_data, name=name, created_at=getTimestamp())
-    with open('out/report.html', 'w', encoding='utf-8') as f:
+def htmlReportCreation(template, search_data, name, parser):
+    timestamp = getTimestamp()
+    output = template.render(data=search_data, name=name, created_at=timestamp)
+    if not os.path.exists(parser.out):
+        os.makedirs(parser.out)
+        print('SCRIPT INFO: Output directory created successfully.')
+    with open(os.path.join(parser.out, 'report.html'), 'w', encoding='utf-8') as f:
         f.write(output)
+        print('SCRIPT INFO: HTML report created successfully.')
     return
     
 # Convert HTML to PDF MAIN
-def pdfCreation(file):
+def pdfReportCreation(file, parser):
     try:
-        pdfkit.from_file(file, 'out/report.pdf', verbose=True, options={'enable-local-file-access': ''})
+        pdfkit.from_file(file, os.path.join(parser.out, 'report.pdf'), verbose=False, options={'enable-local-file-access': ''})
+        print('SCRIPT INFO: PDF report created successfully.')
     except Exception as e:
-        print(f"Error creating PDF: {e}")
+        print(f"SCRIPT INFO: Error creating PDF: {e}")
     return
-pdfCreation('out/report.html')
+
 
 # Mailing system
 def sendEmail(receivers, name, search, out_dir, SMTP_USER):
@@ -146,3 +178,43 @@ def sendEmail(receivers, name, search, out_dir, SMTP_USER):
         server.send_message(msg)
     return
 
+def main():
+    # Show Banner
+    scriptBanner()
+
+    # Initialize parser options
+    parser = parserSetup()
+    
+    # Set Jinja html template
+    template = jinjaSetup()
+    
+    # Load query input
+    config = setConfig(parser)
+
+    # Set script input variables
+    name = config.get('name')
+    search = config.get('search')
+    fields = config.get('fields'); fields = ", ".join(fields)
+    max_items = config.get('max_items')
+    recipients = config.get('recipients')
+    
+    # Execute the script search command, it also creates json query file output
+    search_data = makeSearch(
+        search_input=search,
+        fields_input=fields,
+        max_items_input=max_items,
+        parser=parser
+    )
+
+    # Create the HTML report
+    htmlReportCreation(template, search_data, name, parser)
+    html_report_path = os.path.join(parser.out, 'report.html')
+
+    # Create the PDF report based on HTML report
+    pdfReportCreation(html_report_path, parser)
+
+    # Mailing but depends on dry run
+    return
+
+# Script execution
+main()
