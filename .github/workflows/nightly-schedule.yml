@@ -1,4 +1,4 @@
-name: nightly schedule
+name: Nightly Schedule
 on:
   workflow_dispatch:
   schedule:
