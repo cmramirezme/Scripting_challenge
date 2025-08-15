@@ -70,6 +70,9 @@ def parserSetup(): #SETUP
                             type = str,
                             help = 'Output directory for the generated report files.',
                             required = True)
+    run_parser.add_argument('--dry-run',
+                            action='store_true',
+                            help='Perform a dry run without sending emails.')
 
     args = parser.parse_args()
     return args
@@ -214,6 +217,11 @@ def main():
     pdfReportCreation(html_report_path, parser)
 
     # Mailing but depends on dry run
+    if parser.dry_run:
+        print("SCRIPT INFO: Dry run enabled. No emails will be sent.")
+    else:
+        sendEmail(recipients, name, search, parser.out, os.getenv('SMTP_USER'))
+        print("SCRIPT INFO: Email sent successfully.")
     return
 
 # Script execution
