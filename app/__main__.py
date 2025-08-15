@@ -229,6 +229,7 @@ def main():
                   search,
                   fields,
                   max_items,
+                  "out",
                   os.getenv('SMTP_HOST'),
                   os.getenv('SMTP_USER'),
                   os.getenv('SMTP_PASS'),
