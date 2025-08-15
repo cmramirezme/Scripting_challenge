@@ -18,6 +18,7 @@ jobs:
           cd Scripting_challenge
           git checkout test-actions
           pwd
+          ls 
       - name: Upload PDF report
         uses: actions/upload-artifact@v4
         continue-on-error: true
