@@ -16,4 +16,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: pdf-report
-          path: "out/Information Security Awareness Course.pdf"
+          path: "../out/Information Security Awareness Course.pdf"
