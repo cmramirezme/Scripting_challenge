@@ -49,5 +49,6 @@ jobs:
             name=$(basename "$f" .json)
             echo "- Items: $count items" >> $GITHUB_STEP_SUMMARY
           done
+          echo "- logs information:" >> $GITHUB_STEP_SUMMARY
           cat out/log.log >> $GITHUB_STEP_SUMMARY
 
