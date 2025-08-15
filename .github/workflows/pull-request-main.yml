@@ -14,14 +14,12 @@ jobs:
         run: echo "Running app"
       - name: Show current directory and list contents
         run: |
-          pwd
           git clone https://github.com/cmramirezme/Scripting_challenge.git
           cd Scripting_challenge
           git checkout test-actions
-          ls ../ -R 
       - name: Upload PDF report
         uses: actions/upload-artifact@v4
         continue-on-error: true
         with:
           name: pdf-report
-          path: Scripting_challenge/out/
+          path: Scripting_challenge/out/*.pdf
