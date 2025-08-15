@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: dry-run mode
         run: echo "Running app"
-      - name: Show current directory and list contents
+      - name: Clone repository
         run: |
           git clone https://github.com/cmramirezme/Scripting_challenge.git
           cd Scripting_challenge
@@ -22,4 +22,14 @@ jobs:
         continue-on-error: true
         with:
           name: pdf-report
-          path: Scripting_challenge/out/*.pdf
+          path: Scripting_challenge/out/*.{pdf,json}
+          retention-days: 14
+      - name: Summarize output
+        run: |
+          echo "## 📄 Reports Summary" >> $GITHUB_STEP_SUMMARY
+          for f in Scripting_challenge/out/*.json; do
+            count=$(jq length "$f")
+            name=$(basename "$f" .json)
+            echo "- $name: $count items" >> $GITHUB_STEP_SUMMARY
+          done
+

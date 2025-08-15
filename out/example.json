@@ -1,0 +1,9 @@
+{
+  "id": 1024,
+  "name": "Luna",
+  "age": 28,
+  "is_active": true,
+  "email": "luna@example.com",
+  "score": 87.5,
+  "tags": ["alpha", "beta", "gamma"]
+}
