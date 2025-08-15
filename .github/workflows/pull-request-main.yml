@@ -26,7 +26,7 @@ jobs:
         run: |
           pwd
           cd Scripting_challenge
-          mkdir -p out && python3 -m app run --config config/queries.yml --out out --dry-run > out/log.log 2>&1
+          mkdir -p out && python3 -m app run --config config/queries.yml --out out --dry-run > out/log.log 
       - name: Upload PDF report
         uses: actions/upload-artifact@v4
         continue-on-error: true

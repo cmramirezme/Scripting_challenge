@@ -5,7 +5,7 @@ on:
     - cron: "0 6 * * *"
 
 jobs:
-  nightly-schedule:
+  pull-request-on-main:
     runs-on: ubuntu-latest
     steps:
       - name: Clone repository
@@ -15,21 +15,30 @@ jobs:
           git checkout test-actions
           pwd
           ls 
-      - name: Send emails
-        run: echo "Running app to send emails"
-      - name: Upload report
+      - name: Installing dependencies
+        run: |
+          cd Scripting_challenge
+          pip install -r app/requirements.txt
+          sudo apt-get install wkhtmltopdf
+      - name: dry-run mode
+        run: |
+          pwd
+          cd Scripting_challenge
+          mkdir -p out && python3 -m app run --config config/queries.yml --out out --dry-run > out/log.log 2>&1
+      - name: Upload PDF report
         uses: actions/upload-artifact@v4
         continue-on-error: true
         with:
-          name: report
+          name: pdf-report
           path: | 
-            Scripting_challenge/out/
+            Scripting_challenge/out/*.pdf
+            Scripting_challenge/out/*.json
           retention-days: 14
       - name: Summarize output
         run: |
           echo "## 📄 Reports Summary" >> $GITHUB_STEP_SUMMARY
           echo "- Generated reports:" >> $GITHUB_STEP_SUMMARY
-          for f in Scripting_challenge/out/*; do
+          for f in Scripting_challenge/out/*.pdf Scripting_challenge/out/*.json; do
             echo "  - $(basename "$f")" >> $GITHUB_STEP_SUMMARY
           done
           for f in Scripting_challenge/out/*.json; do
