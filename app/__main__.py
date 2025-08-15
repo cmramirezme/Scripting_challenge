@@ -145,7 +145,7 @@ def pdfReportCreation(file, parser):
 
 
 # Mailing system
-def sendEmail(receivers, name, search, out_dir, SMTP_USER):
+def sendEmail(receivers, name, search, fields, max_items, out_dir, smtp_host, smtp_user, smtp_pass, smtp_port, timeout, timestamp):
     # Set report path
     pdf_path = Path(out_dir) / 'report.pdf'
     if not pdf_path.exists():
@@ -155,15 +155,15 @@ def sendEmail(receivers, name, search, out_dir, SMTP_USER):
     # Mail message build
     msg = EmailMessage()
     msg['Subject'] = f"Artworks Report: {name}"
-    msg['From'] = SMTP_USER
+    msg['From'] = smtp_user
 
             # If there are more than one receivers
     if isinstance(receivers, list) and len(receivers) > 1:
         msg['To'] = ', '.join(receivers)
     else:
         msg['To'] = receivers[0]
-        
-    msg.set_content(f"Here is the report of the artworks with the search: {search}")
+
+    msg.set_content(f"The artwork report with search: {search},fields: {fields} and max_items: {max_items} is attached to this email. Generated on: {timestamp}")
 
     # Attach PDF report to email
     with pdf_path.open('rb') as f:
@@ -175,10 +175,13 @@ def sendEmail(receivers, name, search, out_dir, SMTP_USER):
         )
 
     # Send email using environment secrets and SMTP
-    with smtplib.SMTP(os.getenv('SMTP_HOST'), os.getenv('SMTP_PORT')) as server:
+    with smtplib.SMTP(smtp_host, smtp_port, timeout) as server:
+        server.ehlo()
         server.starttls()
-        server.login(os.getenv('SMTP_USER'), os.getenv('SMTP_PASS'))
+        server.ehlo()
+        server.login(smtp_user, smtp_pass)
         server.send_message(msg)
+    print("SCRIPT INFO: Email sent successfully.")
     return
 
 def main():
@@ -220,9 +223,19 @@ def main():
     if parser.dry_run:
         print("SCRIPT INFO: Dry run enabled. No emails will be sent.")
     else:
-        sendEmail(recipients, name, search, parser.out, os.getenv('SMTP_USER'))
-        print("SCRIPT INFO: Email sent successfully.")
+        print("SCRIPT INFO: Sending email...")
+        sendEmail(recipients,
+                  name,
+                  search,
+                  fields,
+                  max_items,
+                  parser.out_dir,
+                  os.getenv('SMTP_HOST'),
+                  os.getenv('SMTP_USER'),
+                  os.getenv('SMTP_PASS'),
+                  os.getenv('SMTP_PORT'),
+                  os.getenv('MAX_TIMEOUT'), # usually 30
+                  getTimestamp())
     return
-
 # Script execution
 main()
