@@ -21,4 +21,4 @@ jobs:
         continue-on-error: true
         with:
           name: pdf-report
-          path: ../out/Information Security Awareness Course.pdf
+          path: "/out/Information Security Awareness Course.pdf"
