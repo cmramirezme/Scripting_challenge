@@ -4,11 +4,16 @@ on:
     branches:
       - test-actions   # <-- tu rama actual
     paths:
-      - "config/queries.yml"
+      - ".github/workflows/pull-request-main.yml"
 
 jobs:
   pull-request-on-main:
     runs-on: ubuntu-latest
     steps:
-      - name: execute in --dry-run mode
+      - name: dry-run mode
         run: echo "Running app"
+      - name: Upload output artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: pdf-report
+          path: out/*.pdf
