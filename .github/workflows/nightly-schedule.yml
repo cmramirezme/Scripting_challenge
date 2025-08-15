@@ -1,13 +1,11 @@
-name: Pull-Request-main
+name: nightly schedule
 on:
-  push:
-    branches:
-      - test-actions  
-    paths:
-      - ".github/workflows/pull-request-main.yml"
+  workflow_dispatch:
+  schedule:
+    - cron: "0 6 * * *"
 
 jobs:
-  pull-request-on-main:
+  nightly schedule:
     runs-on: ubuntu-latest
     steps:
       - name: Clone repository
@@ -17,22 +15,21 @@ jobs:
           git checkout test-actions
           pwd
           ls 
-      - name: dry-run mode
-        run: echo "Running app"
-      - name: Upload PDF report
+      - name: Send emails
+        run: echo "Running app to send emails"
+      - name: Upload report
         uses: actions/upload-artifact@v4
         continue-on-error: true
         with:
-          name: pdf-report
+          name: report
           path: | 
-            Scripting_challenge/out/*.pdf
-            Scripting_challenge/out/*.json
+            Scripting_challenge/out/
           retention-days: 14
       - name: Summarize output
         run: |
           echo "## 📄 Reports Summary" >> $GITHUB_STEP_SUMMARY
           echo "- Generated reports:" >> $GITHUB_STEP_SUMMARY
-          for f in Scripting_challenge/out/*.pdf Scripting_challenge/out/*.json; do
+          for f in Scripting_challenge/out/*; do
             echo "  - $(basename "$f")" >> $GITHUB_STEP_SUMMARY
           done
           for f in Scripting_challenge/out/*.json; do
