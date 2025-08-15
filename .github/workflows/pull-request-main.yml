@@ -13,7 +13,7 @@ jobs:
       - name: dry-run mode
         run: echo "Running app"
       - name: Upload output artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: pdf-report
           path: out/*.pdf
