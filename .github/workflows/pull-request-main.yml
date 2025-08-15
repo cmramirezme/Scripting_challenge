@@ -16,6 +16,7 @@ jobs:
         run: |
           pwd
           ls -R .
+          git branch
       - name: Upload PDF report
         uses: actions/upload-artifact@v4
         continue-on-error: true
