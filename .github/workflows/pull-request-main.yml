@@ -24,4 +24,4 @@ jobs:
         continue-on-error: true
         with:
           name: pdf-report
-          path: out/
+          path: Scripting_challenge/out/
