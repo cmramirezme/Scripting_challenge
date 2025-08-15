@@ -12,6 +12,10 @@ jobs:
     steps:
       - name: dry-run mode
         run: echo "Running app"
+      - name: Show current directory and list contents
+        run: |
+          pwd
+          ls -R .
       - name: Upload PDF report
         uses: actions/upload-artifact@v4
         continue-on-error: true
