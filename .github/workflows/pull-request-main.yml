@@ -24,4 +24,4 @@ jobs:
         continue-on-error: true
         with:
           name: pdf-report
-          path: out/pdf-report.pdf
+          path: out/
