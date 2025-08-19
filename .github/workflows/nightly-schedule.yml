@@ -1,4 +1,4 @@
-name: Nightly-Schedule
+name: Nightly Schedule
 on:
   workflow_dispatch:
   schedule:
@@ -6,8 +6,6 @@ on:
   pull_request:
     branches:
       - main
-permissions:
-  contents: read
 
 concurrency:
   group: nightly-schedule
