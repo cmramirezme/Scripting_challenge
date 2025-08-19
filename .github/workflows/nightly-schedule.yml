@@ -3,12 +3,19 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "0 6 * * *"
-  push:
+  pull_request:
     branches:
-      - test-actions 
+      - main
+permissions:
+  contents: read
+
+concurrency:
+  group: nightly-schedule
+  cancel-in-progress: false
 
 jobs:
   nightly-schedule-task:
+    timeout-minutes: 30
     runs-on: ubuntu-latest
     env:
       SMTP_HOST: ${{ secrets.SMTP_HOST }}
@@ -21,13 +28,14 @@ jobs:
         run: |
           git clone https://github.com/cmramirezme/Scripting_challenge.git
           cd Scripting_challenge
-          git checkout test-actions
+          git checkout main
           pwd
           ls 
       - name: Installing dependencies
         run: |
           cd Scripting_challenge
           pip install -r app/requirements.txt
+          sudo apt-get update -y
           sudo apt-get install wkhtmltopdf
       - name: send emails
         run: |
